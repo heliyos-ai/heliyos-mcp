@@ -107,7 +107,7 @@ openssl genpkey -algorithm Ed25519 -out heliyos-mcp.pem
 # TXT record value for the apex domain heliyos.ai
 echo "v=MCPv1; k=ed25519; p=$(openssl pkey -in heliyos-mcp.pem -pubout -outform DER | tail -c 32 | base64)"
 # value of the MCP_PRIVATE_KEY secret (64 hex characters)
-openssl pkey -in heliyos-mcp.pem -noout -text | grep -A3 'priv:' | grep -v priv | tr -d ' :\n'
+openssl pkey -in heliyos-mcp.pem -noout -text | grep -A2 'priv:' | tail -n 2 | tr -d ' :\n'
 ```
 
 Add the TXT record on `heliyos.ai`, then add `MCP_PRIVATE_KEY` to the `release` environment. Until that secret exists the registry steps are skipped and the npm publish still runs.
