@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "heliyos",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Heliyos, the AI operating system for revenue, for your agent: customer records, notes, tasks, Scouts, reviews, knowledge and AI workers. Set HELIYOS_API_KEY in the environment the client starts servers with.",
   "author": {
     "name": "Heliyos",

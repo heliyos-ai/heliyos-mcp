@@ -1,6 +1,6 @@
 {
   "name": "@heliyos/heliyos-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Model Context Protocol server for Heliyos, the AI operating system for revenue. Gives AI agents tools for customer records, notes, tasks, email and meeting history, Scouts and signals, reviews, workers and the knowledge base, over stdio with a workspace API key.",
   "type": "module",
   "mcpName": "ai.heliyos/crm",
