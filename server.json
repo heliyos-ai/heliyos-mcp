@@ -3,7 +3,7 @@
   "name": "ai.heliyos/heliyos-mcp",
   "title": "Heliyos",
   "description": "Heliyos, the AI operating system for revenue: records, notes, tasks, Scouts and AI workers.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "websiteUrl": "https://docs.heliyos.ai/mcp/overview",
   "repository": {
     "url": "https://github.com/heliyos-ai/heliyos-mcp",
@@ -14,7 +14,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@heliyos/heliyos-mcp",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
