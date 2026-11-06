@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "heliyos": {
+      "command": "npx",
+      "args": ["-y", "@heliyos/mcp"],
+      "env": {
+        "HELIYOS_API_KEY": "${user_config.api_key}",
+        "HELIYOS_BASE_URL": "${user_config.base_url}"
+      }
+    }
+  }
+}

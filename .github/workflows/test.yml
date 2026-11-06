@@ -1,0 +1,55 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # engines.node is >=20; 22 is also the release runtime.
+        node-version: ["20.x", "22.x"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The generated client must match the committed OpenAPI copies.
+      - name: Check codegen is up to date
+        run: |
+          npm run codegen
+          git diff --exit-code -- src/client/generated.ts src/version.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Check the README tool table
+        run: node scripts/tool-table.mjs --check
+
+      - name: Check package and manifests
+        run: npm run prepublish:check
+
+      - name: Validate the Claude Code plugin and marketplace
+        run: npx -y @anthropic-ai/claude-code@2.1.308 plugin validate . --strict

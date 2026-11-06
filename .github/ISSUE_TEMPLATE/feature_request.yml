@@ -1,0 +1,31 @@
+name: Feature request
+description: A tool, parameter or behaviour you need from the Heliyos MCP server.
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: The job you want an agent to finish in Heliyos, in your own words. One or two example prompts help.
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: What is missing today
+      description: Which tool you tried, what it could not do, or which Heliyos feature has no tool yet.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Optional. A tool name, the inputs it should take and what it should return. Tools are named `heliyos_<resource>_<verb>`.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I checked the tool table in the README and the docs at docs.heliyos.ai/mcp.
+          required: true

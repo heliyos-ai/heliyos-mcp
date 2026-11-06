@@ -1,0 +1,1506 @@
+[
+  {
+    "name": "heliyos_records_list",
+    "title": "List records",
+    "description": "Lists records of one object (companies, people, deals, or a custom object) in the Heliyos workspace, newest first. Use it to browse or filter records; use heliyos_records_lookup to find a record by name and heliyos_records_get for one record. Filter with `search` (free text) and `filters` (field conditions joined by `match`); order with `sort`. Returns a table of id, name and key fields plus structuredContent {records:[{id, object_type, name, fields}], next_cursor}. When next_cursor is present, call again with `cursor` set to it for the next page. Record ids feed heliyos_records_get, _update and _delete.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "filters",
+      "limit",
+      "match",
+      "object_type",
+      "response_format",
+      "schema_id",
+      "search",
+      "sort"
+    ],
+    "outputKeys": [
+      "next_cursor",
+      "records"
+    ]
+  },
+  {
+    "name": "heliyos_records_get",
+    "title": "Get a record",
+    "description": "Fetches one record (a company, person, deal, or custom object row) by id. Use it after heliyos_records_list or heliyos_records_lookup gives you an id. \"concise\" returns the name, key fields and a count of linked records; \"detailed\" returns every field, the linked records (for example a person's company or a company's deals) with their ids, and created and updated times. Returns structuredContent {record:{id, object_type, schema_id, name, fields, relationships}}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "record_id",
+      "response_format"
+    ],
+    "outputKeys": [
+      "record"
+    ]
+  },
+  {
+    "name": "heliyos_records_create",
+    "title": "Create a record",
+    "description": "Creates one record (a company, person, deal, or custom object row) with the given field values. Check first with heliyos_records_lookup that the record does not already exist; calling this twice creates two records. Creating a company can start automatic enrichment, which uses credits when automatic enrichment is on (Settings, Autopilot). Returns the new record's id and key fields as structuredContent {record}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "fields",
+      "object_type",
+      "schema_id"
+    ],
+    "outputKeys": [
+      "record"
+    ]
+  },
+  {
+    "name": "heliyos_records_update",
+    "title": "Update a record",
+    "description": "Updates some fields of one record by id; fields you leave out keep their values. Set a field to null to clear it. Field keys are checked against the record's object first, and unknown keys are rejected with the valid ones. `relationships` adds links and never removes existing ones. Get the id from heliyos_records_list or heliyos_records_lookup. Returns the changed fields and the record's key fields as structuredContent {record}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "fields",
+      "record_id"
+    ],
+    "outputKeys": [
+      "record"
+    ]
+  },
+  {
+    "name": "heliyos_records_delete",
+    "title": "Delete records",
+    "description": "Permanently deletes up to 100 records of one object by id. This cannot be undone: confirm with the user first. All ids must belong to the given object_type; the API ignores ids from other objects and does not confirm a count. Returns structuredContent {deleted_count (ids sent), record_ids}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "object_type",
+      "record_ids",
+      "schema_id"
+    ],
+    "outputKeys": [
+      "deleted_count",
+      "record_ids"
+    ]
+  },
+  {
+    "name": "heliyos_records_lookup",
+    "title": "Find records by name",
+    "description": "Finds records of one object whose name contains `query` (case-insensitive; exact and prefix matches rank first), or whose secondary value does (the first of domain, email, job title or stage that the object has). Use it to turn a name the user mentions into a record id. It searches the 2000 most recently updated records; for older ones use heliyos_records_list with search. Returns structuredContent {matches:[{id, name, secondary}], total_matches}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "limit",
+      "object_type",
+      "query",
+      "response_format",
+      "schema_id"
+    ],
+    "outputKeys": [
+      "index_truncated",
+      "matches",
+      "total_matches"
+    ]
+  },
+  {
+    "name": "heliyos_organization_get",
+    "title": "Get the workspace",
+    "description": "Returns the Heliyos workspace this API key belongs to: its id and name, billing status, active plan, member count, how many companies, people and deals it holds, and how many companies are watched out of the plan's limit. Call it first to orient yourself. Use heliyos_objects_list for the objects and their schema ids, heliyos_usage_get for credit usage. Returns structuredContent {organization}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [],
+    "outputKeys": [
+      "organization"
+    ]
+  },
+  {
+    "name": "heliyos_objects_list",
+    "title": "List objects",
+    "description": "Lists the workspace's objects (record types): companies, people, deals and any custom objects, with each one's schema_id, object_type, record count and number of fields. Use it to learn which object_type and schema_id to pass to the heliyos_records_* tools (custom objects need schema_id), then heliyos_objects_get for an object's field keys. Returns every object in one page (a workspace has a handful), as structuredContent {objects}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "response_format"
+    ],
+    "outputKeys": [
+      "objects"
+    ]
+  },
+  {
+    "name": "heliyos_objects_get",
+    "title": "Get an object's fields",
+    "description": "Returns one object's fields: each field key (what heliyos_records_create, _update and _list filters take), its label and type, and which are required. \"detailed\" adds the allowed values of select fields, hidden and AI-filled flags, and the target object of relationship fields. Pick the object with object_type (company, person, deal, or custom with schema_id from heliyos_objects_list). Each field's field_id feeds heliyos_fields_update and heliyos_fields_delete; heliyos_fields_create adds one. Returns structuredContent {object:{schema_id, name, fields:[{key, field_id, type, ...}]}}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "object_type",
+      "response_format",
+      "schema_id"
+    ],
+    "outputKeys": [
+      "object"
+    ]
+  },
+  {
+    "name": "heliyos_fields_create",
+    "title": "Add a field to an object",
+    "description": "Adds one field (column) to an object: companies, people, deals or a custom object (object_type, plus schema_id for custom). Give it a label and a type; select and multiSelect need `options`; `ai_prompt` makes it an AI column. The field key (what record `fields` and filters use) is derived from the label unless `key` is given, and must be new on the object. Relationship fields are created in the Heliyos web app. Calling this twice with the same key fails. Returns structuredContent {field:{field_id, key, label, type}}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "ai_prompt",
+      "description",
+      "hidden",
+      "key",
+      "label",
+      "object_type",
+      "options",
+      "required",
+      "schema_id",
+      "type",
+      "visibility"
+    ],
+    "outputKeys": [
+      "field"
+    ]
+  },
+  {
+    "name": "heliyos_fields_update",
+    "title": "Change a field",
+    "description": "Changes one field of an object by field_id (from heliyos_objects_get): its label, description, options, required or hidden flag, AI prompt, or type. What you leave out is kept. `options` REPLACES the allowed values, and records holding a removed value keep it as stale text. A type change is refused by the platform when existing values do not fit the new type. The field key never changes. Returns structuredContent {field}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "ai_prompt",
+      "description",
+      "field_id",
+      "hidden",
+      "label",
+      "object_type",
+      "options",
+      "required",
+      "schema_id",
+      "type"
+    ],
+    "outputKeys": [
+      "field"
+    ]
+  },
+  {
+    "name": "heliyos_fields_delete",
+    "title": "Delete a field",
+    "description": "Permanently deletes one field of an object by field_id (from heliyos_objects_get) AND its value on every record. This cannot be undone: confirm with the user first, naming the field and the object. Built-in required fields (for example a company's name) are refused by the platform. Returns structuredContent {field_id, key, deleted}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "field_id",
+      "object_type",
+      "schema_id"
+    ],
+    "outputKeys": [
+      "deleted",
+      "field_id",
+      "key"
+    ]
+  },
+  {
+    "name": "heliyos_records_timeline",
+    "title": "Read a record's timeline",
+    "description": "Returns the AI-written timeline of one record (company, person or deal): the record's current relationship summary and dated entries describing what happened (emails, meetings, deal moves), newest first. Use it to brief yourself on an account before acting. For the raw audit trail of field changes use heliyos_records_events; for the emails and meetings themselves use heliyos_interactions_list. Returns structuredContent {record_id, summary, entries, next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "limit",
+      "record_id",
+      "response_format"
+    ],
+    "outputKeys": [
+      "entries",
+      "next_cursor",
+      "record_id",
+      "summary",
+      "total"
+    ]
+  },
+  {
+    "name": "heliyos_records_events",
+    "title": "Read a record's change history",
+    "description": "Returns the audit trail of one record: who changed what and when (people and workers), newest first, each with a one-line change summary. Filter by operation type, event type, date range or text. \"detailed\" adds the paths of the changed fields. Use heliyos_records_timeline instead for a narrative of the relationship. Returns structuredContent {events:[{id, at, operation_type, actor, change_summary}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "event_types",
+      "limit",
+      "operation_types",
+      "record_id",
+      "response_format",
+      "search",
+      "since",
+      "until"
+    ],
+    "outputKeys": [
+      "events",
+      "next_cursor"
+    ]
+  },
+  {
+    "name": "heliyos_interactions_list",
+    "title": "List emails and meetings",
+    "description": "Lists synced emails and meetings, newest first, optionally only those linked to one record (record_id) or of one channel. Each has its subject or title, time, AI summary and the records it is linked to. \"detailed\" adds participants and next steps; heliyos_interactions_get returns one with its full summary. Order with `sort`. Returns structuredContent {interactions:[{id, channel, title, at, summary, record_ids}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "channel",
+      "cursor",
+      "limit",
+      "record_id",
+      "response_format",
+      "search",
+      "sort"
+    ],
+    "outputKeys": [
+      "interactions",
+      "next_cursor"
+    ]
+  },
+  {
+    "name": "heliyos_interactions_get",
+    "title": "Get an email or meeting",
+    "description": "Fetches one synced email thread or meeting by id (from heliyos_interactions_list or heliyos_records_timeline): subject or title, time, the AI summary, sentiment, the records it is linked to, participants and next steps. \"concise\" cuts the summary; \"detailed\" returns all of it. Returns structuredContent {interaction}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "interaction_id",
+      "response_format"
+    ],
+    "outputKeys": [
+      "interaction"
+    ]
+  },
+  {
+    "name": "heliyos_notes_list",
+    "title": "List notes",
+    "description": "Lists notes, newest first, optionally only those linked to one record (record_id) or matching text in the title or body. Each note shows its id, title, a short preview and the records it is linked to. Use heliyos_notes_get for the full text. Returns structuredContent {notes:[{id, title, content, links}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "limit",
+      "record_id",
+      "response_format",
+      "search"
+    ],
+    "outputKeys": [
+      "next_cursor",
+      "notes"
+    ]
+  },
+  {
+    "name": "heliyos_notes_get",
+    "title": "Get a note",
+    "description": "Fetches one note by id with its title, text and linked records. \"concise\" cuts the text at 1500 characters; \"detailed\" returns all of it plus created and updated times. Returns structuredContent {note}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "note_id",
+      "response_format"
+    ],
+    "outputKeys": [
+      "note"
+    ]
+  },
+  {
+    "name": "heliyos_notes_create",
+    "title": "Create a note",
+    "description": "Creates a note, optionally linked to records (a company, person or deal) so it shows on them and can trigger workers. Calling it twice creates two notes. Returns the new note's id as structuredContent {note}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "content",
+      "record_ids",
+      "title"
+    ],
+    "outputKeys": [
+      "note"
+    ]
+  },
+  {
+    "name": "heliyos_notes_update",
+    "title": "Update a note",
+    "description": "Changes a note's title, text or linked records by id; what you leave out is kept. record_ids REPLACES the note's links (pass every record it should stay linked to). Returns structuredContent {note}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "content",
+      "note_id",
+      "record_ids",
+      "title"
+    ],
+    "outputKeys": [
+      "note"
+    ]
+  },
+  {
+    "name": "heliyos_notes_delete",
+    "title": "Delete a note",
+    "description": "Permanently deletes one note by id. This cannot be undone: confirm with the user first. Returns structuredContent {note_id, deleted}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "note_id"
+    ],
+    "outputKeys": [
+      "deleted",
+      "note_id"
+    ]
+  },
+  {
+    "name": "heliyos_tasks_list",
+    "title": "List tasks",
+    "description": "Lists tasks, newest first, optionally only those linked to one record (record_id), in one status, or matching text. Each task shows its id, title, status, priority, due date and whether workers are running on it. Use heliyos_tasks_get for the description and links. Returns structuredContent {tasks:[{id, title, status, ...}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "limit",
+      "record_id",
+      "response_format",
+      "search",
+      "status"
+    ],
+    "outputKeys": [
+      "next_cursor",
+      "tasks"
+    ]
+  },
+  {
+    "name": "heliyos_tasks_get",
+    "title": "Get a task",
+    "description": "Fetches one task by id: title, status, priority, due date, assignees and workers, the workers' run status and run_id, the records it is linked to, and its description (cut at 1500 characters in concise). Returns structuredContent {task}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "response_format",
+      "task_id"
+    ],
+    "outputKeys": [
+      "task"
+    ]
+  },
+  {
+    "name": "heliyos_tasks_events",
+    "title": "Read a task's activity",
+    "description": "Returns the activity (change history) of one task: who changed what and when (people and workers), newest first, each with a one-line change summary. \"detailed\" adds the paths of the changed fields. For a company, person or deal use heliyos_records_events; for what the workers did on the task use heliyos_runs_list with task_id. Returns structuredContent {events:[{id, at, operation_type, actor, change_summary}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "limit",
+      "response_format",
+      "task_id"
+    ],
+    "outputKeys": [
+      "events",
+      "next_cursor"
+    ]
+  },
+  {
+    "name": "heliyos_tasks_create",
+    "title": "Create a task",
+    "description": "Creates a task, optionally linked to records (a company, person or deal). Creating a task can start workers that subscribe to new tasks. Calling it twice creates two tasks. To have workers act on it now, call heliyos_tasks_run with the returned id. Returns structuredContent {task}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "description",
+      "due_date",
+      "priority",
+      "record_ids",
+      "status",
+      "title"
+    ],
+    "outputKeys": [
+      "task"
+    ]
+  },
+  {
+    "name": "heliyos_tasks_update",
+    "title": "Update a task",
+    "description": "Changes a task's title, description, status, priority, due date or linked records by id; what you leave out is kept. Setting status completed also marks it finished. record_ids REPLACES the task's links (pass every record it should stay linked to). Returns structuredContent {task}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "description",
+      "due_date",
+      "priority",
+      "record_ids",
+      "status",
+      "task_id",
+      "title"
+    ],
+    "outputKeys": [
+      "task"
+    ]
+  },
+  {
+    "name": "heliyos_tasks_delete",
+    "title": "Delete a task",
+    "description": "Permanently deletes one task by id. This cannot be undone: confirm with the user first. Returns structuredContent {task_id, deleted}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "task_id"
+    ],
+    "outputKeys": [
+      "deleted",
+      "task_id"
+    ]
+  },
+  {
+    "name": "heliyos_tasks_run",
+    "title": "Run workers on a task",
+    "description": "Starts the workers (AI agents) on one task now and marks it in progress. If a run is already open, returns that run instead of starting another. Runs use credits; the call fails when the workspace is out of them. Returns structuredContent {task_id, run_id, started, status}; follow the run with heliyos_runs_get using run_id.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "task_id"
+    ],
+    "outputKeys": [
+      "run_id",
+      "started",
+      "status",
+      "task_id"
+    ]
+  },
+  {
+    "name": "heliyos_labels_list",
+    "title": "List label groups",
+    "description": "Lists the workspace's classification label groups (for example Intent with values Pricing and Support) that the workers apply to emails and meetings, with each group's id, active flag and values (each with its id). Returns structuredContent {labels:[{id, name, is_active, values:[{id, name}]}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "is_active",
+      "limit",
+      "response_format",
+      "search"
+    ],
+    "outputKeys": [
+      "labels",
+      "next_cursor"
+    ]
+  },
+  {
+    "name": "heliyos_labels_create",
+    "title": "Create a label group",
+    "description": "Creates a classification label group with its values, for example name Intent, values [Pricing, Support]. The workers start applying it to new emails and meetings when it is active. Calling it twice creates two groups; check heliyos_labels_list first. Returns structuredContent {label}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "description",
+      "is_active",
+      "name",
+      "values"
+    ],
+    "outputKeys": [
+      "label"
+    ]
+  },
+  {
+    "name": "heliyos_labels_update",
+    "title": "Update a label group",
+    "description": "Changes a label group's name, description, active flag or values by label_id. `values` REPLACES the group's values: to keep a value, pass it with its existing id (shown as \"Name (id …)\" by heliyos_labels_list); a value without an id is created as a NEW value, even if its name matches an existing one. Values left out are removed, and emails and meetings already classified with them lose that label. Returns structuredContent {label}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "description",
+      "is_active",
+      "label_id",
+      "name",
+      "values"
+    ],
+    "outputKeys": [
+      "label"
+    ]
+  },
+  {
+    "name": "heliyos_labels_delete",
+    "title": "Delete a label group",
+    "description": "Permanently deletes a label group and its values by id. This cannot be undone: confirm with the user first. To stop the workers applying it but keep it, use heliyos_labels_update with is_active false. Returns structuredContent {label_id, deleted}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "label_id"
+    ],
+    "outputKeys": [
+      "deleted",
+      "label_id"
+    ]
+  },
+  {
+    "name": "heliyos_notification_settings_get",
+    "title": "Get notification settings",
+    "description": "Returns the workspace's notification email settings: whether they are on, who receives them, and which events notify (each immediate or in a daily digest). Returns structuredContent {settings:{configured, is_active, notify_emails, event_types:[{type, frequency}]}}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [],
+    "outputKeys": [
+      "settings"
+    ]
+  },
+  {
+    "name": "heliyos_notification_settings_update",
+    "title": "Update notification settings",
+    "description": "Changes the workspace's notification email settings. Each key you pass REPLACES that setting: notify_emails is the full recipient list and event_types the full list of notifying events (read the current ones with heliyos_notification_settings_get and send the complete list). Keys you leave out are kept. scout.signal_detected is always immediate. Returns structuredContent {settings}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "event_types",
+      "is_active",
+      "notify_emails"
+    ],
+    "outputKeys": [
+      "settings"
+    ]
+  },
+  {
+    "name": "heliyos_team_members_list",
+    "title": "List team members",
+    "description": "Lists the workspace's people: joined members and pending invitations, each with its membership_id, email, name, role (OWNER, ADMIN, MEMBER) and status (active, invited, declined or revoked). Filter by role or by text in the name or email. Returns structuredContent {members:[{membership_id, email, name, role, status}], total, next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "limit",
+      "response_format",
+      "role",
+      "search"
+    ],
+    "outputKeys": [
+      "members",
+      "next_cursor",
+      "total"
+    ]
+  },
+  {
+    "name": "heliyos_team_members_invite",
+    "title": "Invite a team member",
+    "description": "Emails an invitation to join the workspace with the given role (ADMIN or MEMBER). A second invite to an email with a pending invitation fails with CONFLICT (resend it from Heliyos), so check heliyos_team_members_list first. Returns structuredContent {member} with the new membership_id and status invited.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "email",
+      "role"
+    ],
+    "outputKeys": [
+      "member"
+    ]
+  },
+  {
+    "name": "heliyos_team_members_remove",
+    "title": "Remove a team member",
+    "description": "Removes a person from the workspace, or cancels a pending invitation, by membership_id (from heliyos_team_members_list). They lose access immediately. This cannot be undone (they would need a new invitation): confirm with the user first. The last owner cannot be removed. Returns structuredContent {membership_id, removed}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "membership_id"
+    ],
+    "outputKeys": [
+      "membership_id",
+      "removed"
+    ]
+  },
+  {
+    "name": "heliyos_team_members_change_role",
+    "title": "Change a team member's role",
+    "description": "Sets a team member's role to ADMIN or MEMBER by membership_id (from heliyos_team_members_list). Owners' roles and the OWNER role cannot be changed with an API key. Returns structuredContent {membership_id, role}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "membership_id",
+      "role"
+    ],
+    "outputKeys": [
+      "membership_id",
+      "role"
+    ]
+  },
+  {
+    "name": "heliyos_watchlist_get",
+    "title": "Get the watchlist",
+    "description": "Lists the companies on the watchlist (the accounts the workers monitor with Scouts and keep enriched), most recently created records first (not by watch date), with their ids, names and key fields. \"detailed\" also returns watchlist statistics on the first page: tasks done, deals, meetings and actions across watched companies. Use heliyos_companies_watch / _unwatch to change it. Returns structuredContent {companies:[{id, name, fields}], statistics?, next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "limit",
+      "response_format"
+    ],
+    "outputKeys": [
+      "companies",
+      "next_cursor",
+      "statistics"
+    ]
+  },
+  {
+    "name": "heliyos_companies_watch",
+    "title": "Watch a company",
+    "description": "Adds a company record to the watchlist: the workers enrich it, pull in its emails and meetings, and start its Scouts. Counts against the plan's watched-company limit (heliyos_organization_get) and uses credits for enrichment. Watching an already watched company changes nothing. Returns structuredContent {record_id, watched}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "record_id"
+    ],
+    "outputKeys": [
+      "record_id",
+      "watched"
+    ]
+  },
+  {
+    "name": "heliyos_companies_unwatch",
+    "title": "Unwatch a company",
+    "description": "Removes a company record from the watchlist. Its Scouts are deleted and the workers stop monitoring it; its history (emails, meetings, notes, signals) is kept, so watching it again resumes where it left off. Confirm with the user first. Returns structuredContent {record_id, watched}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "record_id"
+    ],
+    "outputKeys": [
+      "record_id",
+      "watched"
+    ]
+  },
+  {
+    "name": "heliyos_usage_get",
+    "title": "Get credit usage",
+    "description": "Lists the workspace's credit usage, newest first: when credits were used, by which feature (company_enrichment, worker_run, scout, ...), how many, and on which record. Filter by date range, feature, record or text. Read-only: usage and credits cannot be changed via the API. Returns structuredContent {entries:[{at, feature, credits, record_id}], page_credits, total_entries, next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "feature",
+      "from",
+      "limit",
+      "record_id",
+      "response_format",
+      "search",
+      "to"
+    ],
+    "outputKeys": [
+      "entries",
+      "next_cursor",
+      "page_credits",
+      "total_entries"
+    ]
+  },
+  {
+    "name": "heliyos_scouts_list",
+    "title": "List scouts",
+    "description": "Lists the workspace's scouts: the built-in (default) and custom monitors that look for events such as funding, hiring or leadership changes on watched companies or across the web. Shows each scout's id, whether it is active, its cadence, and how many signals it found (new of total). Returns every scout (there are only a few, so there is no paging). Use heliyos_scouts_get for one scout's query and recent signals, heliyos_signals_list for what scouts found. Returns structuredContent {scouts:[{id, name, type, is_active, ...}]}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "apply_to",
+      "is_active",
+      "response_format",
+      "type"
+    ],
+    "outputKeys": [
+      "scouts"
+    ]
+  },
+  {
+    "name": "heliyos_scouts_get",
+    "title": "Get a scout",
+    "description": "Fetches one scout by id: what it looks for (its query), cadence, effort, scope, whether it is active, its preview state (custom scouts) and its signal counts. \"detailed\" adds the 5 most recent signals with their ids and the full query. Returns structuredContent {scout, recent_signals?}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "response_format",
+      "scout_id"
+    ],
+    "outputKeys": [
+      "recent_signals",
+      "scout"
+    ]
+  },
+  {
+    "name": "heliyos_scouts_create",
+    "title": "Create a scout",
+    "description": "Creates a custom scout and starts a preview run of its query. The scout stays inactive until you confirm it: when heliyos_scouts_get shows preview completed, call heliyos_scouts_update with state \"confirmed\" to activate it on its companies. apply_to: watchlist (every watched company, the default), selected_watchlist (only selected_company_ids, which must be watched companies) or entire_web. The scope cannot be changed later. Scout runs use credits. Calling this twice creates two scouts. Returns structuredContent {scout}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "apply_to",
+      "cadence",
+      "category",
+      "effort",
+      "name",
+      "preview_company",
+      "preview_lookback",
+      "query",
+      "selected_company_ids"
+    ],
+    "outputKeys": [
+      "scout"
+    ]
+  },
+  {
+    "name": "heliyos_scouts_update",
+    "title": "Update a scout",
+    "description": "Changes a scout's name, category, query, cadence, effort or selected companies, and/or its state; what you leave out is kept. Changes apply to every company the scout runs on. state: \"paused\" stops it on every company, \"active\" resumes it, \"confirmed\" activates a new custom scout after its preview completed. The scope (apply_to) cannot be changed. To delete a custom scout use heliyos_scouts_delete. Returns structuredContent {scout}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cadence",
+      "category",
+      "effort",
+      "name",
+      "query",
+      "scout_id",
+      "selected_company_ids",
+      "state"
+    ],
+    "outputKeys": [
+      "scout"
+    ]
+  },
+  {
+    "name": "heliyos_scouts_delete",
+    "title": "Delete a scout",
+    "description": "Permanently deletes one custom scout and stops it on every company it runs on. Built-in (default) scouts cannot be deleted; pause them with heliyos_scouts_update state \"paused\". Signals it already found are kept. This cannot be undone: confirm with the user first. Returns structuredContent {scout_id, deleted, deleted_company_scouts}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "scout_id"
+    ],
+    "outputKeys": [
+      "deleted",
+      "deleted_company_scouts",
+      "scout_id"
+    ]
+  },
+  {
+    "name": "heliyos_companies_scouts_list",
+    "title": "List a company's scouts",
+    "description": "Lists the scouts running on one company: each company scout's own id, its global scout id (scout_id, for heliyos_scouts_get), status (active, paused or failed), cadence and last run. A company has only a few, so there is no paging. Returns structuredContent {company_id, scouts:[{id, scout_id, name, status, ...}]}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "company_id",
+      "status"
+    ],
+    "outputKeys": [
+      "company_id",
+      "scouts"
+    ]
+  },
+  {
+    "name": "heliyos_companies_scouts_add",
+    "title": "Add scouts to a company",
+    "description": "Starts the given scouts on one company. Each scout_id must be an active global scout with apply_to watchlist (see heliyos_scouts_list). Setup runs in the background; check it with heliyos_companies_scouts_list. A scout already running on the company is not added twice. Scout runs use credits. Returns structuredContent {company_id, scout_ids, status}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "company_id",
+      "scout_ids"
+    ],
+    "outputKeys": [
+      "company_id",
+      "scout_ids",
+      "status"
+    ]
+  },
+  {
+    "name": "heliyos_companies_scouts_remove",
+    "title": "Remove a company's scouts",
+    "description": "Stops and removes EVERY scout running on one company (there is no per-scout removal). Signals already found are kept, and the company stays watched. This cannot be undone: confirm with the user first. Returns structuredContent {company_id, removed (company scout ids), failed}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "company_id"
+    ],
+    "outputKeys": [
+      "company_id",
+      "failed",
+      "removed"
+    ]
+  },
+  {
+    "name": "heliyos_signals_list",
+    "title": "List signals",
+    "description": "Lists signals (events scouts found, such as a funding round or a leadership change), newest first. Filter by company_id, by scout_id (a global scout from heliyos_scouts_list) and by status (new = unread). Each signal shows its id, date, company and a summary; detailed adds source URLs. Mark them read with heliyos_signals_mark_read. Returns structuredContent {signals:[{id, status, detected_at, company_id, company_name, summary}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "company_id",
+      "cursor",
+      "limit",
+      "response_format",
+      "scout_id",
+      "status"
+    ],
+    "outputKeys": [
+      "next_cursor",
+      "signals"
+    ]
+  },
+  {
+    "name": "heliyos_signals_mark_read",
+    "title": "Mark signals read",
+    "description": "Marks signals read: either the given signal_ids (1 to 20) or every new signal about one company (company_id). Pass exactly one of the two. Marking a read signal again changes nothing. Returns structuredContent {marked, failed} for signal_ids, or {company_id, marked_count} for a company.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "company_id",
+      "signal_ids"
+    ],
+    "outputKeys": [
+      "company_id",
+      "failed",
+      "marked",
+      "marked_count"
+    ]
+  },
+  {
+    "name": "heliyos_ask",
+    "title": "Ask Heliyos",
+    "description": "Asks Heliyos (the orchestrator and its workers) a question or gives it a job, in plain language, for example \"summarise what changed with Acme this week\" or \"draft a follow-up to the Globex thread\". It can read and act on the whole workspace: it may change records and tasks or send email, and consequential actions wait for approval in Heliyos, so confirm jobs that change things with the user first. Waits up to 90 s: a finished run returns its answer and run_id. Otherwise it returns {run_id, status, thread_id} and the text \"Still running\"; then call heliyos_runs_get with that run_id and wait: true. Pass thread_id to continue the same conversation. Runs use credits; calling it twice starts two runs. Needs a client tool timeout of at least 120 s. Returns structuredContent {run_id, status, thread_id, done, answer?}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "message",
+      "thread_id"
+    ],
+    "outputKeys": [
+      "answer",
+      "done",
+      "run_id",
+      "status",
+      "thread_id"
+    ]
+  },
+  {
+    "name": "heliyos_runs_get",
+    "title": "Get a run",
+    "description": "Reads one worker run: its status, whether it is done, its steps (seq, type, title, status, start and end times, a one-line summary each), reviews waiting on a person, credits used, and the final answer once there is one. wait: true waits up to 30 s for the run to finish or stop on a person; call again with wait: true while done is false, unless the run waits on a person (awaiting_approval, paused, waiting, scheduled): then it only moves when someone acts in Heliyos, and wait: true returns at once. \"detailed\" adds each step's raw input, output and error. Returns structuredContent {run:{id, status, done, steps, reviews, answer?}}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "response_format",
+      "run_id",
+      "wait"
+    ],
+    "outputKeys": [
+      "run"
+    ]
+  },
+  {
+    "name": "heliyos_runs_list",
+    "title": "List runs",
+    "description": "Lists worker runs (chats with Heliyos, task runs and automatic runs), newest first, optionally in one status, for one task, one worker or one company, or in a date range. Shows each run's id, status, title and start time; read one with heliyos_runs_get. Order with `sort`. Returns structuredContent {runs:[{id, status, title, ...}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "company_id",
+      "cursor",
+      "limit",
+      "response_format",
+      "since",
+      "sort",
+      "status",
+      "task_id",
+      "until",
+      "worker_id"
+    ],
+    "outputKeys": [
+      "next_cursor",
+      "runs"
+    ]
+  },
+  {
+    "name": "heliyos_reviews_list",
+    "title": "List reviews",
+    "description": "Lists reviews: worker actions waiting for a person's decision (an email draft, a deal change, a meeting, a task, a document, or a question the worker asked), pending ones by default, newest first. Filter by status, type, or the record or task they are about. Each shows its id, type, title, summary, the worker and the records. Read one with heliyos_reviews_get, decide it with heliyos_reviews_decide. Returns structuredContent {reviews:[{id, status, type, title, summary, worker, run_id, records}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "limit",
+      "object_id",
+      "response_format",
+      "status",
+      "type"
+    ],
+    "outputKeys": [
+      "next_cursor",
+      "reviews"
+    ]
+  },
+  {
+    "name": "heliyos_reviews_get",
+    "title": "Get a review",
+    "description": "Fetches one review by id with everything a person needs to decide it: the worker's proposal and reasoning, the draft email (subject, recipients, body) or the deal's fields before and after, the records and run it belongs to, and, once decided, the comment and outcome. Long texts are cut at 400 characters in concise. Returns structuredContent {review}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "response_format",
+      "review_id"
+    ],
+    "outputKeys": [
+      "review"
+    ]
+  },
+  {
+    "name": "heliyos_reviews_decide",
+    "title": "Approve or reject a review",
+    "description": "Decides one pending review. Approving does the thing the worker proposed: the email is sent, the deal or label is changed, the meeting is booked, or the paused run continues with its action; rejecting discards it and tells the worker why (feedback). A review is decided once; a second call fails. Approving acts on the user's behalf and cannot be undone: read it with heliyos_reviews_get and confirm with the user first. For a deal_update you may pass the fields as the user edited them in `data`; for a paused tool call, edited arguments in `args`. Returns structuredContent {review_id, decision, status, run_notified}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "args",
+      "comment",
+      "data",
+      "decision",
+      "feedback",
+      "review_id"
+    ],
+    "outputKeys": [
+      "decision",
+      "review",
+      "review_id",
+      "run_notified",
+      "status"
+    ]
+  },
+  {
+    "name": "heliyos_workers_list",
+    "title": "List workers",
+    "description": "Lists the workspace's workers (AI agents): the built-in default ones and custom ones, each with its id, type, active flag, description and triggers. Returns every worker in one page (a workspace has a handful). Use heliyos_workers_get for a worker's instructions, heliyos_runs_list with worker_id for its runs. Returns structuredContent {workers:[{id, name, type, is_active, ...}]}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "is_active",
+      "response_format",
+      "type"
+    ],
+    "outputKeys": [
+      "workers"
+    ]
+  },
+  {
+    "name": "heliyos_workers_get",
+    "title": "Get a worker",
+    "description": "Fetches one worker by id: name, type, active flag, description, triggers and instructions (cut at 1500 characters in concise). \"detailed\" adds the full instructions, the tools it may call, read-only and memory flags, file scope and times. Returns structuredContent {worker}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "response_format",
+      "worker_id"
+    ],
+    "outputKeys": [
+      "worker"
+    ]
+  },
+  {
+    "name": "heliyos_workers_create",
+    "title": "Create a worker",
+    "description": "Creates a custom worker (AI agent) with a name, instructions and, optionally, triggers that start it: on every new task, when mentioned in chat, on named events, or on a cron schedule. It starts active unless is_active is false, and its runs use credits and can change records or send email (consequential actions wait for approval in Heliyos), so confirm with the user first. Names are unique; a repeat fails with CONFLICT. Before calling: heliyos_triggers_list for valid event names and heliyos_workers_tools_list for the tool_names it may use (both are checked; unknown names are refused). Files are configured in the Heliyos web app. Returns structuredContent {worker}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "description",
+      "instructions",
+      "is_active",
+      "memory_enabled",
+      "name",
+      "read_only",
+      "tool_names",
+      "triggers"
+    ],
+    "outputKeys": [
+      "worker"
+    ]
+  },
+  {
+    "name": "heliyos_workers_update",
+    "title": "Update a worker",
+    "description": "Changes a worker by id; what you leave out is kept. Custom workers: name, instructions, description, is_active, read_only, memory_enabled, triggers and tool_names. Default (built-in) workers: only instructions, description, is_active, memory_enabled and triggers; the rest is ignored. `triggers` REPLACES the worker's own triggers (a default worker keeps its built-in ones) and `tool_names` REPLACES its tools: pass every tool it should keep (heliyos_workers_get detailed shows the current ones, heliyos_workers_tools_list the valid names). Set is_active false to pause a worker. Returns structuredContent {worker}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "description",
+      "instructions",
+      "is_active",
+      "memory_enabled",
+      "name",
+      "read_only",
+      "tool_names",
+      "triggers",
+      "worker_id"
+    ],
+    "outputKeys": [
+      "worker"
+    ]
+  },
+  {
+    "name": "heliyos_workers_delete",
+    "title": "Delete a worker",
+    "description": "Permanently deletes one custom worker by id and its schedules. Default (built-in) workers cannot be deleted; pause them with heliyos_workers_update is_active false. Past runs are kept. This cannot be undone: confirm with the user first. Returns structuredContent {worker_id, deleted}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "worker_id"
+    ],
+    "outputKeys": [
+      "deleted",
+      "worker_id"
+    ]
+  },
+  {
+    "name": "heliyos_triggers_list",
+    "title": "List worker triggers",
+    "description": "Lists the events a worker can subscribe to (the names to put in an event trigger's `events` on heliyos_workers_create / heliyos_workers_update), each with what it means and the object it is about. Also lists the mention and schedule kinds. Call it before creating a worker that reacts to events. Returns every trigger in one page. Returns structuredContent {triggers:[{name, kind, label, description, object_type, ...}]}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "kind",
+      "object_type"
+    ],
+    "outputKeys": [
+      "triggers"
+    ]
+  },
+  {
+    "name": "heliyos_workers_tools_list",
+    "title": "List tools a worker can use",
+    "description": "Lists the tools a worker may be given (the names to put in `tool_names` on heliyos_workers_create / heliyos_workers_update): Heliyos's own tools (source builtin) and the actions of the workspace's connected integrations (source action, for example sending email through the connected mailbox). Each has a risk class; communicate, write_crm and external tools do things people will want to review. Call it before creating a worker. Returns every tool in one page. Returns structuredContent {tools:[{name, label, description, source, risk, provider}]}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "provider",
+      "response_format",
+      "search",
+      "source"
+    ],
+    "outputKeys": [
+      "tools"
+    ]
+  },
+  {
+    "name": "heliyos_knowledge_get",
+    "title": "Read the knowledge base",
+    "description": "Returns what the workers know about the business: the business context, products information, pain points, value proposition and qualification criteria, and the team's custom entries (label and content). Texts are cut at 1500 characters in concise. Knowledge-base files are listed with heliyos_files_list kind knowledge_base. Returns structuredContent {knowledge:{business_context, products_information, ..., entries}}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "response_format"
+    ],
+    "outputKeys": [
+      "knowledge"
+    ]
+  },
+  {
+    "name": "heliyos_knowledge_update",
+    "title": "Update the knowledge base",
+    "description": "Changes the knowledge base's fixed texts: business_context, products_information, pain_points, value_proposition and qualification_criteria. What you leave out is kept, and the custom entries are untouched (use heliyos_knowledge_entries_set for those). Each text replaces the current one whole, so read it with heliyos_knowledge_get first when you mean to add to it. The workers read these on their next run. Returns structuredContent {knowledge}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "business_context",
+      "pain_points",
+      "products_information",
+      "qualification_criteria",
+      "value_proposition"
+    ],
+    "outputKeys": [
+      "knowledge"
+    ]
+  },
+  {
+    "name": "heliyos_knowledge_entries_set",
+    "title": "Add or change a knowledge entry",
+    "description": "Adds a custom knowledge entry (a label and its content) or replaces the content of the entry with that label. Other entries and the fixed texts are kept. Use it for facts the fixed texts do not cover, for example \"Pricing\" or \"Competitors\". Remove one with heliyos_knowledge_entries_delete. Returns structuredContent {entry, created, entries}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "content",
+      "label"
+    ],
+    "outputKeys": [
+      "created",
+      "entries",
+      "entry"
+    ]
+  },
+  {
+    "name": "heliyos_knowledge_entries_delete",
+    "title": "Delete a knowledge entry",
+    "description": "Removes one custom knowledge entry by label. The fixed texts and other entries are kept. This cannot be undone: confirm with the user first. Returns structuredContent {label, deleted, entries}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "label"
+    ],
+    "outputKeys": [
+      "deleted",
+      "entries",
+      "label"
+    ]
+  },
+  {
+    "name": "heliyos_files_list",
+    "title": "List files",
+    "description": "Lists files, newest first: knowledge-base files (documents the workers read, kind knowledge_base) and attachments on records (kind attachment). Filter by kind, by the record a file is attached to (record_id) or by name. Shows each file's id, name, kind, type and size; use heliyos_files_get for a download link. Returns structuredContent {files:[{id, name, kind, content_type, size_bytes}], next_cursor}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "cursor",
+      "kind",
+      "limit",
+      "record_id",
+      "response_format",
+      "search"
+    ],
+    "outputKeys": [
+      "files",
+      "next_cursor"
+    ]
+  },
+  {
+    "name": "heliyos_files_get",
+    "title": "Get a file",
+    "description": "Fetches one file's details by id: name, kind, type, size, description and the records it is attached to. \"detailed\" also returns a signed download link that expires about 60 s after the call, so use it at once. Returns structuredContent {file}.",
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "file_id",
+      "response_format"
+    ],
+    "outputKeys": [
+      "file"
+    ]
+  },
+  {
+    "name": "heliyos_files_upload",
+    "title": "Upload a file",
+    "description": "Uploads one file, up to 10 MB, as a knowledge-base file (kind knowledge_base: documents the workers read, such as playbooks or pricing) or as an attachment (kind attachment), optionally attached to one record (record_id). Pass the content as text (stored as UTF-8) or as content_base64 for binary files, exactly one of the two. content_type is guessed from the name's extension when omitted; HTML, SVG, XML, scripts and executables are refused. Calling it twice stores two files. Returns structuredContent {file}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "content_base64",
+      "content_type",
+      "kind",
+      "name",
+      "record_id",
+      "text"
+    ],
+    "outputKeys": [
+      "file"
+    ]
+  },
+  {
+    "name": "heliyos_files_delete",
+    "title": "Delete a file",
+    "description": "Permanently deletes one file by id. A knowledge-base file also disappears from what the workers can read. This cannot be undone: confirm with the user first. Returns structuredContent {file_id, deleted}.",
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "idempotentHint": true,
+      "openWorldHint": false
+    },
+    "inputKeys": [
+      "file_id"
+    ],
+    "outputKeys": [
+      "deleted",
+      "file_id"
+    ]
+  }
+]

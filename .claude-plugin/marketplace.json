@@ -1,0 +1,17 @@
+{
+  "name": "heliyos",
+  "description": "Heliyos plugins for Claude Code and Codex.",
+  "owner": {
+    "name": "Heliyos",
+    "url": "https://www.heliyos.ai"
+  },
+  "plugins": [
+    {
+      "name": "heliyos",
+      "source": "./",
+      "description": "Heliyos tools over MCP: customer records, notes, tasks, Scouts, reviews, knowledge and AI workers.",
+      "category": "productivity",
+      "tags": ["crm", "sales", "mcp"]
+    }
+  ]
+}

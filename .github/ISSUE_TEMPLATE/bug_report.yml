@@ -1,0 +1,68 @@
+name: Bug report
+description: Something in the Heliyos MCP server does not work as documented.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. **Never paste your API key** or any customer data. Keys start with `heliyos_`; if one slipped into a log, revoke it in Heliyos under Settings, API keys before posting.
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Run `npx -y @heliyos/mcp --version` or check `npm ls @heliyos/mcp`.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: client
+    attributes:
+      label: MCP client
+      options:
+        - Claude Code
+        - Claude Desktop
+        - Codex
+        - Cursor
+        - VS Code
+        - Antigravity
+        - Other (say which below)
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Node.js version and operating system
+      placeholder: "Node 22.11.0, macOS 15"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you asked the agent to do, which tool it called, and what came back. Error text from the tool result or the client's MCP log is the most useful part.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Install with ...
+        2. Ask the agent to ...
+        3. See error ...
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I removed every API key, token and customer record from this report.
+          required: true
+        - label: I checked the Troubleshooting section of the README.
+          required: true

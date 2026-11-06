@@ -1,0 +1,163 @@
+name: Publish Package to NPM
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write # Required for npm Trusted Publishing (OIDC) and provenance
+  contents: write # Required for the automatic version-bump commit/push
+
+# Never run two releases at once: both would try to publish the same version.
+concurrency:
+  group: publish-package
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    # Loop guard. The bump commit below says "[skip ci]" and starts with
+    # "Bump version to ". GitHub already skips "[skip ci]" pushes, and this
+    # condition also stops the job when the push came from the bump itself or
+    # from the Actions bot, even if a PAT or App token pushed it.
+    if: >-
+      ${{ !contains(github.event.head_commit.message, '[skip ci]')
+      && !startsWith(github.event.head_commit.message, 'Bump version to ')
+      && github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    # Holds MCP_PRIVATE_KEY. Restrict this environment to the main branch.
+    environment: release
+    env:
+      # The MCP registry steps run only when the DNS signing key is configured,
+      # so the npm publish works before the heliyos.ai TXT record exists.
+      HAS_MCP_PRIVATE_KEY: ${{ secrets.MCP_PRIVATE_KEY != '' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      # Node >= 22.14 and npm >= 11.5.1 are hard requirements for OIDC trusted
+      # publishing. registry-url must be set so npm targets registry.npmjs.org.
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Upgrade npm to a trusted-publishing capable version
+        run: |
+          npm install -g npm@11.21.1
+          npm --version
+
+      # This job holds id-token: write, so no dependency install script runs
+      # here (none is needed at runtime) and no npm cache is restored into it.
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
+          git config --global user.name "${{ secrets.GIT_USER_NAME }}"
+
+      # npm refuses to publish a version twice. When the current version is
+      # already on npm, set-version.mjs bumps the patch version in package.json,
+      # the lockfile, server.json, every plugin manifest and src/version.ts, and
+      # prints the files it wrote; exactly those are committed. The tree must be
+      # clean afterwards, so test.yml's codegen drift check stays green.
+      # This runs before the build so dist carries the new version.
+      - name: Bump the version if it is already published
+        id: version_check
+        run: |
+          NAME=$(jq -r '.name' package.json)
+          CURR_VERSION=$(jq -r '.version' package.json)
+          echo "Current version: $CURR_VERSION"
+          if npm view "$NAME@$CURR_VERSION" version > /dev/null 2>&1; then
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$CURR_VERSION"
+            NEW_VERSION=$MAJOR.$MINOR.$((PATCH + 1))
+            echo "$NAME@$CURR_VERSION is already published. Bumping to $NEW_VERSION."
+            node scripts/set-version.mjs "$NEW_VERSION" > "$RUNNER_TEMP/version-files.txt"
+            xargs git add -- < "$RUNNER_TEMP/version-files.txt"
+            git commit -m "Bump version to $NEW_VERSION [skip ci]"
+            # Regenerating must change nothing the commit did not already carry.
+            npm run codegen
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "::error::The version bump left uncommitted changes:"
+              git status --porcelain
+              exit 1
+            fi
+            git push origin main
+          fi
+          echo "version=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Build package
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Check package and manifests
+        run: |
+          npm run prepublish:check
+          node scripts/tool-table.mjs --check
+
+      # Last line of defence: this package is meant to be public, and only
+      # under the @heliyos scope.
+      - name: Assert package is scoped and public
+        run: |
+          NAME=$(jq -r '.name' package.json)
+          ACCESS=$(jq -r '.publishConfig.access // "MISSING"' package.json)
+          case "$NAME" in
+            @heliyos/*) ;;
+            *) echo "::error::Package name '$NAME' is not under the @heliyos scope."; exit 1 ;;
+          esac
+          if [ "$ACCESS" != "public" ]; then
+            echo "::error::publishConfig.access is '$ACCESS', expected 'public'."
+            exit 1
+          fi
+          echo "OK: $NAME will be published with public access."
+
+      # No npm token secret here: authentication is entirely the
+      # OIDC id-token exchanged with npm's Trusted Publisher for this repo,
+      # and --provenance links the published tarball to this workflow run.
+      - name: Publish to NPM (OIDC trusted publishing)
+        run: npm publish --access public --provenance
+
+      # The MCP registry checks the npm package (and its mcpName) when it
+      # accepts server.json, so wait until npm serves the new version.
+      - name: Wait for npm to serve the new version
+        run: |
+          NAME=$(jq -r '.name' package.json)
+          VERSION="${{ steps.version_check.outputs.version }}"
+          for attempt in $(seq 1 30); do
+            if npm view "$NAME@$VERSION" version > /dev/null 2>&1; then
+              echo "$NAME@$VERSION is live."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::$NAME@$VERSION did not appear on npm within 5 minutes."
+          exit 1
+
+      # Pinned release, verified by checksum. Bump both values together.
+      - name: Install mcp-publisher
+        if: env.HAS_MCP_PRIVATE_KEY == 'true'
+        env:
+          MCP_PUBLISHER_VERSION: v1.8.1
+          MCP_PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+        run: |
+          curl -fsSL -o mcp-publisher.tar.gz "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz"
+          echo "${MCP_PUBLISHER_SHA256}  mcp-publisher.tar.gz" | sha256sum -c -
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+          rm mcp-publisher.tar.gz
+
+      # ai.heliyos/* is a domain namespace, so the registry authenticates it
+      # with the Ed25519 key behind the heliyos.ai DNS TXT record (GitHub OIDC
+      # only grants io.github.* names).
+      - name: Authenticate to the MCP registry
+        if: env.HAS_MCP_PRIVATE_KEY == 'true'
+        env:
+          MCP_PRIVATE_KEY: ${{ secrets.MCP_PRIVATE_KEY }}
+        run: ./mcp-publisher login dns --domain heliyos.ai --private-key "$MCP_PRIVATE_KEY"
+
+      - name: Publish server.json to the MCP registry
+        if: env.HAS_MCP_PRIVATE_KEY == 'true'
+        run: ./mcp-publisher publish

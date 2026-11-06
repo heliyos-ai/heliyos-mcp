@@ -1,0 +1,91 @@
+{
+  "name": "@heliyos/mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for Heliyos, the AI operating system for revenue. Gives AI agents tools for customer records, notes, tasks, email and meeting history, Scouts and signals, reviews, workers and the knowledge base, over stdio with a workspace API key.",
+  "type": "module",
+  "mcpName": "ai.heliyos/crm",
+  "bin": {
+    "heliyos-mcp": "dist/src/bin/stdio.js"
+  },
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "server.json",
+    ".claude-plugin",
+    ".cursor-plugin",
+    ".mcp.json",
+    "plugin.json",
+    "mcp.json",
+    "skills"
+  ],
+  "scripts": {
+    "sync-openapi": "node scripts/sync-openapi.mjs",
+    "codegen": "node scripts/codegen.mjs",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && npm run codegen && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "test": "vitest run",
+    "test:update-tool-snapshot": "UPDATE_TOOL_SNAPSHOT=1 vitest run tests/toolList.snapshot.test.ts",
+    "smoke": "HELIYOS_MCP_SMOKE=1 vitest run tests/smoke.live.test.ts",
+    "readme:tools": "npm run build && node scripts/tool-table.mjs",
+    "install-links": "node scripts/cursor-link.mjs",
+    "prepublish:check": "node scripts/prepublish-check.mjs",
+    "prepublishOnly": "npm run prepublish:check && npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heliyos-ai/heliyos-mcp.git"
+  },
+  "homepage": "https://docs.heliyos.ai/mcp/overview",
+  "bugs": {
+    "url": "https://github.com/heliyos-ai/heliyos-mcp/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Heliyos",
+    "url": "https://www.heliyos.ai"
+  },
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "heliyos",
+    "crm",
+    "sales",
+    "revenue",
+    "gtm",
+    "ai-agents",
+    "ai-workers",
+    "customer-memory",
+    "agent-tools",
+    "stdio"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.3.1",
+    "@types/node": "^22.20.5",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "msw": "^2.15.0",
+    "typescript": "~5.9.3",
+    "vitest": "^2.1.9"
+  }
+}

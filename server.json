@@ -1,0 +1,48 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "ai.heliyos/crm",
+  "title": "Heliyos",
+  "description": "Heliyos, the AI operating system for revenue: records, notes, tasks, Scouts and AI workers.",
+  "version": "1.0.0",
+  "websiteUrl": "https://docs.heliyos.ai/mcp/overview",
+  "repository": {
+    "url": "https://github.com/heliyos-ai/heliyos-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@heliyos/mcp",
+      "version": "1.0.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "HELIYOS_API_KEY",
+          "description": "Heliyos API key (starts with heliyos_). Create one in Heliyos under Settings, API keys.",
+          "format": "string",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "HELIYOS_BASE_URL",
+          "description": "Heliyos API base URL. Leave unset for production.",
+          "format": "string",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "https://api-prod.heliyos.ai"
+        },
+        {
+          "name": "HELIYOS_MCP_EXPERIMENTAL",
+          "description": "Set to 1 to add the experimental tools (record enrichment, custom object create, update and delete).",
+          "format": "boolean",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

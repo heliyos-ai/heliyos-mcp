@@ -1,0 +1,38 @@
+{
+  "name": "heliyos",
+  "displayName": "Heliyos",
+  "version": "1.0.0",
+  "description": "Heliyos, the AI operating system for revenue, for your agent: customer records, notes, tasks, Scouts, reviews, knowledge and AI workers, through the Heliyos API with an API key.",
+  "author": {
+    "name": "Heliyos",
+    "url": "https://www.heliyos.ai"
+  },
+  "homepage": "https://docs.heliyos.ai/mcp/overview",
+  "repository": "https://github.com/heliyos-ai/heliyos-mcp",
+  "license": "MIT",
+  "keywords": [
+    "crm",
+    "sales",
+    "heliyos",
+    "mcp"
+  ],
+  "documentationUrl": "https://docs.heliyos.ai/mcp/overview",
+  "supportUrl": "https://github.com/heliyos-ai/heliyos-mcp/issues",
+  "privacyPolicyUrl": "https://www.heliyos.ai/privacy",
+  "termsOfServiceUrl": "https://www.heliyos.ai/terms",
+  "userConfig": {
+    "api_key": {
+      "type": "string",
+      "title": "Heliyos API key",
+      "description": "Create one in Heliyos under Settings → API keys. It starts with heliyos_ and is shown once.",
+      "required": true,
+      "sensitive": true
+    },
+    "base_url": {
+      "type": "string",
+      "title": "Heliyos API URL",
+      "description": "Leave as is unless Heliyos support gave you another API URL.",
+      "default": "https://api-prod.heliyos.ai"
+    }
+  }
+}

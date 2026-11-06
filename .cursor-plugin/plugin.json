@@ -1,0 +1,43 @@
+{
+  "name": "heliyos",
+  "version": "1.0.0",
+  "description": "Heliyos, the AI operating system for revenue, for your agent: customer records, notes, tasks, Scouts, reviews, knowledge and AI workers.",
+  "author": {
+    "name": "Heliyos"
+  },
+  "homepage": "https://docs.heliyos.ai/mcp/overview",
+  "repository": "https://github.com/heliyos-ai/heliyos-mcp",
+  "license": "MIT",
+  "keywords": [
+    "crm",
+    "sales",
+    "heliyos",
+    "mcp"
+  ],
+  "mcpServers": {
+    "heliyos": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@heliyos/mcp"
+      ],
+      "env": {
+        "HELIYOS_API_KEY": "${HELIYOS_API_KEY}"
+      }
+    }
+  },
+  "variables": {
+    "type": "object",
+    "properties": {
+      "HELIYOS_API_KEY": {
+        "type": "string",
+        "title": "Heliyos API key",
+        "description": "Create one in Heliyos under Settings → API keys. It starts with heliyos_ and is shown once."
+      }
+    },
+    "required": [
+      "HELIYOS_API_KEY"
+    ]
+  }
+}
