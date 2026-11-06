@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  # Start a release from the current main by hand (Actions tab, Run workflow,
+  # or `gh workflow run publish-package.yml`). Use this instead of re-running a
+  # failed run: a re-run checks out the run's original commit, so if that run
+  # already pushed a version bump, its push is rejected as non-fast-forward.
+  workflow_dispatch:
 
 permissions:
   id-token: write # Required for npm Trusted Publishing (OIDC) and provenance
