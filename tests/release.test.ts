@@ -115,7 +115,7 @@ describe("prepublish check", () => {
     });
     const problems = checkPackage(dir).join("\n");
     expect(problems).toMatch(/server\.json name .* mcpName/);
-    expect(problems).toMatch(/identifier .* @heliyos\/mcp/);
+    expect(problems).toMatch(/identifier .* @heliyos\/heliyos-mcp/);
   });
 });
 

@@ -14,14 +14,14 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@heliyos/mcp"><img alt="npm version" src="https://img.shields.io/npm/v/%40heliyos%2Fmcp?label=npm"></a>
+  <a href="https://www.npmjs.com/package/@heliyos/heliyos-mcp"><img alt="npm version" src="https://img.shields.io/npm/v/%40heliyos%2Fmcp?label=npm"></a>
   <a href="https://github.com/heliyos-ai/heliyos-mcp/actions/workflows/test.yml"><img alt="CI" src="https://github.com/heliyos-ai/heliyos-mcp/actions/workflows/test.yml/badge.svg"></a>
   <a href="https://nodejs.org"><img alt="Node 20+" src="https://img.shields.io/badge/node-%3E%3D20-brightgreen"></a>
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <a href="https://modelcontextprotocol.io"><img alt="MCP" src="https://img.shields.io/badge/protocol-MCP-black"></a>
 </p>
 
-`@heliyos/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server for [Heliyos](https://www.heliyos.ai). It runs on your machine over stdio and calls the [Heliyos API](https://docs.heliyos.ai/api-reference/introduction) with a workspace API key, so an agent in Claude Code, Codex, Cursor, VS Code, Antigravity or any other MCP client can work in your CRM.
+`@heliyos/heliyos-mcp` is a [Model Context Protocol](https://modelcontextprotocol.io) server for [Heliyos](https://www.heliyos.ai). It runs on your machine over stdio and calls the [Heliyos API](https://docs.heliyos.ai/api-reference/introduction) with a workspace API key, so an agent in Claude Code, Codex, Cursor, VS Code, Antigravity or any other MCP client can work in your CRM.
 
 **Documentation: [docs.heliyos.ai/mcp](https://docs.heliyos.ai/mcp/overview)** · [Install guides](https://docs.heliyos.ai/mcp/install) · [All tools](https://docs.heliyos.ai/mcp/tools/index) · [API reference](https://docs.heliyos.ai/api-reference/introduction) · [Changelog](CHANGELOG.md)
 
@@ -44,7 +44,7 @@ Important actions that workers take still wait for review in Heliyos, so the tea
 2. Add the server to your client. For Claude Code:
 
    ```sh
-   claude mcp add --transport stdio --env HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY --scope user heliyos -- npx -y @heliyos/mcp
+   claude mcp add --transport stdio --env HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY --scope user heliyos -- npx -y @heliyos/heliyos-mcp
    ```
 
 3. Ask your agent *"Which Heliyos workspace am I connected to?"*. It calls `heliyos_organization_get` and answers with your workspace name.
@@ -79,7 +79,7 @@ Only workspace owners and admins can create keys. A key has admin access to one 
 
 ## Install
 
-Every client runs the same command, `npx -y @heliyos/mcp`, with your key in the `HELIYOS_API_KEY` environment variable. In the snippets below, replace `YOUR_HELIYOS_API_KEY` with your key.
+Every client runs the same command, `npx -y @heliyos/heliyos-mcp`, with your key in the `HELIYOS_API_KEY` environment variable. In the snippets below, replace `YOUR_HELIYOS_API_KEY` with your key.
 
 ### Claude Code
 
@@ -93,7 +93,7 @@ claude plugin install heliyos@heliyos
 Or add only the MCP server:
 
 ```sh
-claude mcp add --transport stdio --env HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY --scope user heliyos -- npx -y @heliyos/mcp
+claude mcp add --transport stdio --env HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY --scope user heliyos -- npx -y @heliyos/heliyos-mcp
 ```
 
 Check it with `claude mcp list`, or `/mcp` inside a session.
@@ -107,7 +107,7 @@ Open **Settings → Developer → Edit Config** and add the server to `claude_de
   "mcpServers": {
     "heliyos": {
       "command": "npx",
-      "args": ["-y", "@heliyos/mcp"],
+      "args": ["-y", "@heliyos/heliyos-mcp"],
       "env": { "HELIYOS_API_KEY": "YOUR_HELIYOS_API_KEY" }
     }
   }
@@ -123,7 +123,7 @@ Add the server to `~/.codex/config.toml`:
 ```toml
 [mcp_servers.heliyos]
 command = "npx"
-args = ["-y", "@heliyos/mcp"]
+args = ["-y", "@heliyos/heliyos-mcp"]
 env_vars = ["HELIYOS_API_KEY"]
 startup_timeout_sec = 30
 tool_timeout_sec = 120
@@ -139,17 +139,17 @@ HELIYOS_API_KEY = "YOUR_HELIYOS_API_KEY"
 The CLI does the same in one line, after which you add `tool_timeout_sec = 120` to the table it writes:
 
 ```sh
-codex mcp add heliyos --env HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY -- npx -y @heliyos/mcp
+codex mcp add heliyos --env HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY -- npx -y @heliyos/heliyos-mcp
 ```
 
 ### Cursor
 
-[Add Heliyos to Cursor](https://cursor.com/install-mcp?name=heliyos&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBoZWxpeW9zL21jcCJdLCJlbnYiOnsiSEVMSVlPU19BUElfS0VZIjoiJHtlbnY6SEVMSVlPU19BUElfS0VZfSJ9fQ%3D%3D)
+[Add Heliyos to Cursor](https://cursor.com/install-mcp?name=heliyos&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBoZWxpeW9zL2hlbGl5b3MtbWNwIl0sImVudiI6eyJIRUxJWU9TX0FQSV9LRVkiOiIke2VudjpIRUxJWU9TX0FQSV9LRVl9In19)
 
 The link opens this deeplink, which you can also paste into your browser:
 
 ```text
-cursor://anysphere.cursor-deeplink/mcp/install?name=heliyos&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBoZWxpeW9zL21jcCJdLCJlbnYiOnsiSEVMSVlPU19BUElfS0VZIjoiJHtlbnY6SEVMSVlPU19BUElfS0VZfSJ9fQ%3D%3D
+cursor://anysphere.cursor-deeplink/mcp/install?name=heliyos&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBoZWxpeW9zL2hlbGl5b3MtbWNwIl0sImVudiI6eyJIRUxJWU9TX0FQSV9LRVkiOiIke2VudjpIRUxJWU9TX0FQSV9LRVl9In19
 ```
 
 It adds this entry to `~/.cursor/mcp.json`:
@@ -160,7 +160,7 @@ It adds this entry to `~/.cursor/mcp.json`:
     "heliyos": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@heliyos/mcp"],
+      "args": ["-y", "@heliyos/heliyos-mcp"],
       "env": { "HELIYOS_API_KEY": "${env:HELIYOS_API_KEY}" }
     }
   }
@@ -171,12 +171,12 @@ Cursor reads `${env:HELIYOS_API_KEY}` from its own environment. Export the varia
 
 ### VS Code
 
-[Install Heliyos in VS Code](https://vscode.dev/redirect/mcp/install?name=heliyos&inputs=%5B%7B%22type%22%3A%22promptString%22%2C%22id%22%3A%22heliyos-api-key%22%2C%22description%22%3A%22Heliyos+API+key+%28Settings+%E2%86%92+API+keys%29%22%2C%22password%22%3Atrue%7D%5D&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40heliyos%2Fmcp%22%5D%2C%22env%22%3A%7B%22HELIYOS_API_KEY%22%3A%22%24%7Binput%3Aheliyos-api-key%7D%22%7D%7D)
+[Install Heliyos in VS Code](https://vscode.dev/redirect/mcp/install?name=heliyos&inputs=%5B%7B%22type%22%3A%22promptString%22%2C%22id%22%3A%22heliyos-api-key%22%2C%22description%22%3A%22Heliyos+API+key+%28Settings+%E2%86%92+API+keys%29%22%2C%22password%22%3Atrue%7D%5D&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40heliyos%2Fheliyos-mcp%22%5D%2C%22env%22%3A%7B%22HELIYOS_API_KEY%22%3A%22%24%7Binput%3Aheliyos-api-key%7D%22%7D%7D)
 
 The link opens this deeplink, which you can also paste into your browser:
 
 ```text
-vscode:mcp/install?%7B%22name%22%3A%22heliyos%22%2C%22inputs%22%3A%5B%7B%22type%22%3A%22promptString%22%2C%22id%22%3A%22heliyos-api-key%22%2C%22description%22%3A%22Heliyos%20API%20key%20(Settings%20%E2%86%92%20API%20keys)%22%2C%22password%22%3Atrue%7D%5D%2C%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40heliyos%2Fmcp%22%5D%2C%22env%22%3A%7B%22HELIYOS_API_KEY%22%3A%22%24%7Binput%3Aheliyos-api-key%7D%22%7D%7D
+vscode:mcp/install?%7B%22name%22%3A%22heliyos%22%2C%22inputs%22%3A%5B%7B%22type%22%3A%22promptString%22%2C%22id%22%3A%22heliyos-api-key%22%2C%22description%22%3A%22Heliyos%20API%20key%20(Settings%20%E2%86%92%20API%20keys)%22%2C%22password%22%3Atrue%7D%5D%2C%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40heliyos%2Fheliyos-mcp%22%5D%2C%22env%22%3A%7B%22HELIYOS_API_KEY%22%3A%22%24%7Binput%3Aheliyos-api-key%7D%22%7D%7D)%22%2C%22password%22%3Atrue%7D%5D%2C%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40heliyos%2Fmcp%22%5D%2C%22env%22%3A%7B%22HELIYOS_API_KEY%22%3A%22%24%7Binput%3Aheliyos-api-key%7D%22%7D%7D
 ```
 
 VS Code asks for the key the first time the server starts and keeps it in its secret storage. To set it up by hand, add this to `.vscode/mcp.json` in a project, or to your user `mcp.json` (**MCP: Open User Configuration**):
@@ -195,7 +195,7 @@ VS Code asks for the key the first time the server starts and keeps it in its se
     "heliyos": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@heliyos/mcp"],
+      "args": ["-y", "@heliyos/heliyos-mcp"],
       "env": { "HELIYOS_API_KEY": "${input:heliyos-api-key}" }
     }
   }
@@ -211,7 +211,7 @@ In the agent panel, open **… → MCP Servers → Manage MCP Servers → View r
   "mcpServers": {
     "heliyos": {
       "command": "npx",
-      "args": ["-y", "@heliyos/mcp"],
+      "args": ["-y", "@heliyos/heliyos-mcp"],
       "env": { "HELIYOS_API_KEY": "YOUR_HELIYOS_API_KEY" }
     }
   }
@@ -223,7 +223,7 @@ In the agent panel, open **… → MCP Servers → Manage MCP Servers → View r
 Run the package over stdio with the key in the environment:
 
 ```sh
-HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY npx -y @heliyos/mcp
+HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY npx -y @heliyos/heliyos-mcp
 ```
 
 The repository also ships portable [Agent Plugins](https://agent-plugins.org) manifests (`plugin.json` and `mcp.json`) for clients that install plugins from a Git repository. They do not carry a key, so set `HELIYOS_API_KEY` in the environment your client starts servers with. In the MCP Registry the server is listed as `ai.heliyos/crm`.

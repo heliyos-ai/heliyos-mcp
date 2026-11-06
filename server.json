@@ -13,7 +13,7 @@
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
-      "identifier": "@heliyos/mcp",
+      "identifier": "@heliyos/heliyos-mcp",
       "version": "1.0.0",
       "runtimeHint": "npx",
       "transport": {

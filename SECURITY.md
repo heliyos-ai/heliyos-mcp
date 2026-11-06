@@ -4,11 +4,11 @@
 
 Please report security issues privately through [GitHub security advisories](https://github.com/heliyos-ai/heliyos-mcp/security/advisories/new). Do not open a public issue or pull request for a vulnerability.
 
-Include what you found, how to reproduce it, and the version of `@heliyos/mcp` you tested. We acknowledge reports within three working days and keep you informed until the fix is released. We credit reporters in the release notes unless they prefer not to be named.
+Include what you found, how to reproduce it, and the version of `@heliyos/heliyos-mcp` you tested. We acknowledge reports within three working days and keep you informed until the fix is released. We credit reporters in the release notes unless they prefer not to be named.
 
 ## Supported versions
 
-Only the latest published version receives security fixes. Upgrade with `npx -y @heliyos/mcp@latest` or by restarting a client that uses `npx -y @heliyos/mcp`, which fetches the current release.
+Only the latest published version receives security fixes. Upgrade with `npx -y @heliyos/heliyos-mcp@latest` or by restarting a client that uses `npx -y @heliyos/heliyos-mcp`, which fetches the current release.
 
 ## What this package does with your data
 

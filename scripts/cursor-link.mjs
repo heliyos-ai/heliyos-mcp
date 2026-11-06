@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 /** The name the server is installed under in MCP clients. */
 export const SERVER_NAME = "heliyos";
 /** The npm package that clients run to start the server. */
-export const PACKAGE_NAME = "@heliyos/mcp";
+export const PACKAGE_NAME = "@heliyos/heliyos-mcp";
 
 const VSCODE_KEY_INPUT = "heliyos-api-key";
 

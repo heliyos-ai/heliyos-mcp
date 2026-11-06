@@ -20,7 +20,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@heliyos/mcp"
+        "@heliyos/heliyos-mcp"
       ],
       "env": {
         "HELIYOS_API_KEY": "${HELIYOS_API_KEY}"

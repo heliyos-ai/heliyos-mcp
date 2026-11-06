@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * stdio entry point: `npx -y @heliyos/mcp`. stdout carries MCP protocol
+ * stdio entry point: `npx -y @heliyos/heliyos-mcp`. stdout carries MCP protocol
  * messages only; diagnostics go to stderr and never include the API key.
  */
 import { serveStdio, StdioServerTransport } from "@modelcontextprotocol/server/stdio";

@@ -2,6 +2,6 @@
 // Do not edit by hand: run `npm run sync-openapi && npm run codegen`.
 /* eslint-disable */
 /** The npm package name, for the User-Agent header. */
-export const PACKAGE_NAME = "@heliyos/mcp";
+export const PACKAGE_NAME = "@heliyos/heliyos-mcp";
 /** The package version, for the User-Agent header and the MCP server info. */
 export const PACKAGE_VERSION = "1.0.0";
