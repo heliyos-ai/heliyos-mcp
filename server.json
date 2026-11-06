@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "ai.heliyos/crm",
+  "name": "ai.heliyos/heliyos-mcp",
   "title": "Heliyos",
   "description": "Heliyos, the AI operating system for revenue: records, notes, tasks, Scouts and AI workers.",
   "version": "1.0.1",

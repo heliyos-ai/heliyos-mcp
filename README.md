@@ -226,7 +226,7 @@ Run the package over stdio with the key in the environment:
 HELIYOS_API_KEY=YOUR_HELIYOS_API_KEY npx -y @heliyos/heliyos-mcp
 ```
 
-The repository also ships portable [Agent Plugins](https://agent-plugins.org) manifests (`plugin.json` and `mcp.json`) for clients that install plugins from a Git repository. They do not carry a key, so set `HELIYOS_API_KEY` in the environment your client starts servers with. In the MCP Registry the server is listed as `ai.heliyos/crm`.
+The repository also ships portable [Agent Plugins](https://agent-plugins.org) manifests (`plugin.json` and `mcp.json`) for clients that install plugins from a Git repository. They do not carry a key, so set `HELIYOS_API_KEY` in the environment your client starts servers with. In the MCP Registry the server is listed as `ai.heliyos/heliyos-mcp`.
 
 ## Tool timeout
 
