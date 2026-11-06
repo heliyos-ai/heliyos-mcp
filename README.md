@@ -83,12 +83,14 @@ Every client runs the same command, `npx -y @heliyos/heliyos-mcp`, with your key
 
 ### Claude Code
 
-Install the plugin. It asks for your key and keeps it in your system's secure credential store, and it adds a skill that teaches Claude when to use which tool.
+Install the plugin and set your key in one go. The key goes into your system's secure credential store, never into a file, and the plugin adds a skill that teaches Claude when to use which tool.
 
 ```sh
 claude plugin marketplace add heliyos-ai/heliyos-mcp
-claude plugin install heliyos@heliyos
+claude plugin install heliyos@heliyos --config api_key=YOUR_HELIYOS_API_KEY
 ```
+
+If you installed without `--config`, the server stays off until the key is set: run `/plugin configure heliyos@heliyos` inside Claude Code and enter it there. Then `/mcp` lists `heliyos`, or restart Claude Code if it does not.
 
 Or add only the MCP server:
 
@@ -431,7 +433,8 @@ Report a security issue privately through [GitHub security advisories](https://g
 | `FORBIDDEN_ACTION` | The workspace plan or billing status does not allow the action, or the action is not available to API keys. |
 | `RATE_LIMITED` | You are above 60 requests per minute. Wait a minute, and prefer list calls over many single gets. |
 | `heliyos_ask` times out | Raise the client's tool timeout (see [Tool timeout](#tool-timeout)). The run keeps going; follow it with `heliyos_runs_get`. |
-| The server does not start or shows no tools | Check `node -v` is 20 or later. The first start downloads the package, which can take longer than a 10 second startup timeout; raise it (Codex `startup_timeout_sec`, Claude Code `MCP_TIMEOUT`). Apps opened from the dock may not find `npx`; use its full path from `which npx`. |
+| The server shows "connecting" on its first start | The first `npx -y @heliyos/heliyos-mcp` downloads the package, which can take 20 to 30 seconds on a slow connection and outlast a client's startup timeout. Warm the cache once from a terminal with `npx -y @heliyos/heliyos-mcp --version`, then reconnect; later starts take about a second. Or raise the timeout (Codex `startup_timeout_sec`, Claude Code `MCP_TIMEOUT=60000`). |
+| `Node 16.x is too old` or tools fail with `fetch is not defined` | The client started `npx` with an old Node, usually a version manager's default. The server needs Node 20 or newer and restarts itself on the newest suitable Node it finds (nvm, fnm, n, Volta, Homebrew, PATH); the message names which one. If it finds none, install Node 20+ or run `nvm install 20 && nvm alias default 20`, then restart the client. Apps opened from the dock may not find `npx` at all; use its full path from `which npx`. |
 | Experimental tools are missing | Set `HELIYOS_MCP_EXPERIMENTAL=1` and restart the client. |
 
 Still stuck? Open an issue at [github.com/heliyos-ai/heliyos-mcp/issues](https://github.com/heliyos-ai/heliyos-mcp/issues). Never paste your key.

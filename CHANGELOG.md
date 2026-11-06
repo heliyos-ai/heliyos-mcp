@@ -4,6 +4,12 @@ All notable changes to `@heliyos/heliyos-mcp` are recorded here. The format foll
 
 ## [Unreleased]
 
+### Fixed
+
+- The server re-executes itself on the newest Node 20+ it can find when a client starts it with an older Node (a version manager's default, for example), instead of failing before the MCP handshake; it explains what to install when none exists.
+- `--version` prints the package version without starting a server, so `npx -y @heliyos/heliyos-mcp --version` warms the npx cache before a client's first start.
+- The Claude Code install documentation passes the API key with `--config`; the CLI does not prompt for it.
+
 ## [1.0.0]
 
 First public release.
